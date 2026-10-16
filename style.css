@@ -123,3 +123,11 @@
     border-radius: 5px;
     cursor: pointer;
 }
+#continuerMagasiner {
+    display: block;
+    color: white;
+    border: none;
+    font: inherit;
+    font-weight: bold;
+    box-sizing: border-box;
+}

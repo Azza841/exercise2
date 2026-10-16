@@ -1,64 +1,28 @@
 var listeProduits;
 var panier= new Array();
 const TAUX_TVA=0.19
-/*function chargerZoneItem() {
-    const xhr = new XMLHttpRequest();
-    // On suppose qu'on fait appel à un API qui retourne le contenu du fichier produits.json
-    const url = "produits.json";
 
-    // Configuration de la requête asynchrone (True)
-    xhr.open('GET', url, true);
-
-    xhr.onreadystatechange = function() {
-        // Vérification du cycle de vie de la requête
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                var reponse = xhr.responseText;
-                var objJSON = JSON.parse(reponse);
-                listeProduits = objJSON.liste; // Stockage dans la variable globale
-
-                // Récupérer le panier sauvegardé dans les cookies (si existant)
-                //recupererPanierCookie();
-
-                // Affichage dynamique des items
-                afficherListeProduits();
-            } else {
-                alert("❌ Erreur lors de la récupération des données (Status " + xhr.status + ")");
-            }
-        }
-    };
-
-    xhr.send();
-}*/
-
-async function chargerZoneItem() {
-    const url = "produits.json";
-
+async function changerZoneItem() {
     try {
-        // Envoi de la requête GET
-        const response = await fetch(url);
+        const reponse = await fetch("./produits.json");
 
-        // Vérification si la réponse est correcte (status entre 200 et 299)
-        if (!response.ok) {
-            throw new Error("Status " + response.status);
+        if (!reponse.ok) {
+            throw new Error(`Erreur HTTP : ${reponse.status}`);
         }
 
-        // Extraction et analyse automatique du JSON
-        const objJSON = await response.json();
+        const donnees = await reponse.json();
 
-        listeProduits = objJSON.liste; // Stockage dans la variable globale
+        if (!Array.isArray(donnees.liste)) {
+            throw new Error("Le fichier JSON ne contient pas de liste de produits valide.");
+        }
 
-        // Récupérer le panier sauvegardé dans les cookies (si existant)
-        //recupererPanierCookie();
-
-        // Affichage dynamique des items
+        listeProduits = donnees.liste;
         afficherListeProduits();
-
-    } catch (error) {
-        // Gestion des erreurs réseau ou de statut HTTP incorrect
-        alert("❌ Erreur lors de la récupération des données (" + error.message + ")");
+    } catch (erreur) {
+        console.error("Impossible de charger les produits :", erreur);
     }
 }
+
 
 
 function afficherListeProduits() {
@@ -207,4 +171,14 @@ function fermerDialogue(){
     document.querySelector("#zoneDetail").style.display = "none";
 }
 document.getElementById("panier").addEventListener("click", afficheFacture);
-window.onload = chargerZoneItem;
+// ...existing code...
+function continuerDeMagasiner() {
+    document.getElementById("zoneContenuFacture").style.display = "none";
+    document.getElementById("zoneContenuItem").style.display = "block";
+}
+
+document.getElementById("continuerMagasiner")
+    .addEventListener("click", continuerDeMagasiner);
+
+// ...existing code...
+window.onload = changerZoneItem;
